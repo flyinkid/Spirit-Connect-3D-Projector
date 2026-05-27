@@ -3,12 +3,11 @@
 import { useControls, folder, button } from "leva";
 
 /**
- * Stable Leva controls — values that do NOT change between presets.
- * Preset-sensitive controls (Material, Lights, colors) live in
- * useHologramPresetControls so they can reinitialize when the preset changes.
+ * Returns both the current control values and Leva's setter so theme presets
+ * can reset the panel without overriding user edits during render.
  */
 export function useHologramControls(onReplay: () => void) {
-  return useControls("Hologram", {
+  const [values, set] = useControls("Hologram", () => ({
     Geometry: folder(
       {
         particleCount: {
@@ -520,5 +519,7 @@ export function useHologramControls(onReplay: () => void) {
       },
       { collapsed: true },
     ),
-  });
+  }), [onReplay]);
+
+  return { values, set };
 }

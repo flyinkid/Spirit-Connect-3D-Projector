@@ -30,10 +30,15 @@ export default function PlaygroundCanvas() {
   const isSphereModel = activeModel.id === "sphere";
   const isTerrainModel = activeModel.id === "terrain";
 
-  const leva = useHologramControls(() => {
+  const { values: leva, set: setLeva } = useHologramControls(() => {
     setReplayTrigger((t) => t + 1);
     setHeaderVisible(false);
   });
+
+  const applyPreset = (preset: PresetId) => {
+    setActivePreset(preset);
+    setLeva(PRESETS[preset]);
+  };
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 720px), (pointer: coarse)");
@@ -68,7 +73,6 @@ export default function PlaygroundCanvas() {
           }}
           replayTrigger={replayTrigger}
           {...leva}
-          {...PRESETS[activePreset]}
           breathAmp={isSphereModel ? 0.065 : 0}
           floatAmp={
             isSphereModel ? 0.025 : isTerrainModel ? 0.006 : leva.floatAmp
@@ -97,7 +101,7 @@ export default function PlaygroundCanvas() {
             onToggleLeva={() => setHideLeva((v) => !v)}
             activePreset={activePreset}
             onTogglePreset={() =>
-              setActivePreset((p) => (p === "light" ? "dark" : "light"))
+              applyPreset(activePreset === "light" ? "dark" : "light")
             }
           />
           <ModelSelector
